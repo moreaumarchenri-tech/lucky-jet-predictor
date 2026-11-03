@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LuckyJet Predictor</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #101522;
+  color: white;
+  text-align: center;
+}
+.container {
+  padding: 25px 15px;
+}
+h1 {
+  color: #28d7ff;
+  font-size: 27px;
+}
+.card {
+  background: #202b40;
+  padding: 25px;
+  border-radius: 18px;
+  margin-top: 25px;
+}
+.result {
+  font-size: 45px;
+  color: #36edaa;
+  font-weight: bold;
+  margin: 25px;
+}
+button {
+  background: #12b981;
+  color: white;
+  border: none;
+  padding: 16px 25px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  width: 100%;
+}
+button:active {
+  background: #087e5b;
+}
+.note {
+  color: #ffc66b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🚀 LUCKYJET PREDICTOR</h1>
+  <p>Bienvenue dans ton application</p>
+
+  <div class="card">
+    <h2>Analyse de simulation</h2>
+    <p>Résultat indicatif</p>
+    <div class="result" id="result">--</div>
+    <button onclick="simuler()">
+      LANCER LA SIMULATION
+    </button>
+    <p id="message">Appuie sur le bouton pour commencer.</p>
+  </div>
+
+  <p class="note">
+    Attention : cette application est une simulation.
+    Elle ne prédit pas les résultats réels de LuckyJet.
+    Aucun multiplicateur n'est garanti.
+  </p>
+</div>
+
+<script>
+function simuler() {
+  let valeur = (1 + Math.random() * 9).toFixed(2);
+  document.getElementById("result").innerText =
+    valeur + "x";
+  document.getElementById("message").innerText =
+    "Simulation terminée ! Résultat aléatoire.";
+}
+</script>
+</body>
+</html>
+
