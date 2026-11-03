@@ -1,88 +1,239 @@
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d1b">
 <title>LuckyJet Predictor</title>
+
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  padding: 20px;
   font-family: Arial, sans-serif;
-  background: #101522;
+  background: #080d1b;
   color: white;
-  text-align: center;
 }
+
 .container {
-  padding: 25px 15px;
+  max-width: 600px;
+  margin: auto;
 }
+
 h1 {
-  color: #28d7ff;
+  text-align: center;
+  color: #00e5ff;
   font-size: 27px;
 }
-.card {
-  background: #202b40;
-  padding: 25px;
-  border-radius: 18px;
-  margin-top: 25px;
+
+.subtitle {
+  text-align: center;
+  color: #aaa;
 }
-.result {
-  font-size: 45px;
-  color: #36edaa;
+
+.clock {
+  text-align: center;
+  font-size: 25px;
+  color: #00ff99;
+  margin: 20px;
   font-weight: bold;
-  margin: 25px;
 }
+
 button {
-  background: #12b981;
-  color: white;
-  border: none;
-  padding: 16px 25px;
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: bold;
   width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: #00c853;
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  margin: 8px 0;
+  cursor: pointer;
 }
-button:active {
-  background: #087e5b;
+
+button.secondary {
+  background: #1769ff;
 }
-.note {
-  color: #ffc66b;
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #131d32;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 13px 5px;
+  text-align: center;
+  border-bottom: 1px solid #283650;
   font-size: 13px;
-  line-height: 1.5;
+}
+
+th {
+  color: #00e5ff;
+  background: #1c2942;
+}
+
+.multiplier {
+  color: #00ff99;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.prediction {
+  color: #ffd740;
+  font-weight: bold;
+}
+
+.status {
+  text-align: center;
+  color: #00ff99;
+  margin-top: 15px;
+}
+
+.warning {
+  background: #29243a;
+  border-radius: 10px;
+  padding: 12px;
+  color: #ffcf70;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 25px;
 }
 </style>
 </head>
+
 <body>
 <div class="container">
-  <h1>🚀 LUCKYJET PREDICTOR</h1>
-  <p>Bienvenue dans ton application</p>
 
-  <div class="card">
-    <h2>Analyse de simulation</h2>
-    <p>Résultat indicatif</p>
-    <div class="result" id="result">--</div>
-    <button onclick="simuler()">
-      LANCER LA SIMULATION
-    </button>
-    <p id="message">Appuie sur le bouton pour commencer.</p>
-  </div>
+<h1>🚀 LUCKYJET PREDICTOR</h1>
+<p class="subtitle">Tableau automatique des manches</p>
 
-  <p class="note">
-    Attention : cette application est une simulation.
-    Elle ne prédit pas les résultats réels de LuckyJet.
-    Aucun multiplicateur n'est garanti.
-  </p>
+<div class="clock" id="clock">00:00:00</div>
+
+<button onclick="generer()">⚡ GÉNÉRER LES 10 MANCHES</button>
+
+<button class="secondary" onclick="toggleAuto()" id="autoBtn">
+▶ ACTIVER LE MODE AUTOMATIQUE
+</button>
+
+<p class="status" id="status">En attente de génération</p>
+
+<table>
+<thead>
+<tr>
+<th>N°</th>
+<th>HEURE</th>
+<th>PRÉDICTION</th>
+<th>MULTIPLICATEUR</th>
+</tr>
+</thead>
+
+<tbody id="resultats">
+<tr>
+<td colspan="4">Appuie sur Générer pour commencer</td>
+</tr>
+</tbody>
+</table>
+
+<div class="warning">
+⚠️ Application de simulation uniquement.
+Les multiplicateurs sont aléatoires et ne prédisent pas les vrais résultats de LuckyJet.
+Aucun gain n'est garanti.
+</div>
+
 </div>
 
 <script>
-function simuler() {
-  let valeur = (1 + Math.random() * 9).toFixed(2);
-  document.getElementById("result").innerText =
-    valeur + "x";
-  document.getElementById("message").innerText =
-    "Simulation terminée ! Résultat aléatoire.";
+let automatique = false;
+let intervalle = null;
+
+function heureActuelle() {
+  return new Date().toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+}
+
+function actualiserHorloge() {
+  document.getElementById("clock").innerText =
+    heureActuelle();
+}
+
+setInterval(actualiserHorloge, 1000);
+actualiserHorloge();
+
+function generer() {
+  const tableau = document.getElementById("resultats");
+  tableau.innerHTML = "";
+
+  let maintenant = new Date();
+
+  for (let i = 0; i < 10; i++) {
+    let heure = new Date(
+      maintenant.getTime() + i * 60000
+    );
+
+    let h = heure.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    let valeur = (1 + Math.random() * 9).toFixed(2);
+
+    let prediction = "SIMULATION";
+
+    let ligne = document.createElement("tr");
+
+    ligne.innerHTML = `
+      <td>${i + 1}</td>
+      <td>${h}</td>
+      <td class="prediction">${prediction}</td>
+      <td class="multiplier">${valeur}x</td>
+    `;
+
+    tableau.appendChild(ligne);
+  }
+
+  document.getElementById("status").innerText =
+    "10 manches simulées à " + heureActuelle();
+}
+
+function toggleAuto() {
+  automatique = !automatique;
+
+  const bouton = document.getElementById("autoBtn");
+
+  if (automatique) {
+    generer();
+
+    intervalle = setInterval(generer, 60000);
+
+    bouton.innerText = "⏹ ARRÊTER LE MODE AUTOMATIQUE";
+
+    document.getElementById("status").innerText =
+      "Mode automatique activé";
+  } else {
+    clearInterval(intervalle);
+
+    bouton.innerText = "▶ ACTIVER LE MODE AUTOMATIQUE";
+
+    document.getElementById("status").innerText =
+      "Mode automatique désactivé";
+  }
 }
 </script>
+
 </body>
 </html>
 
